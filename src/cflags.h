@@ -1,0 +1,4 @@
+#ifndef CFLAGS_CFLAGS_H
+#define CFLAGS_CFLAGS_H
+
+#endif //CFLAGS_CFLAGS_H
