@@ -25,7 +25,7 @@ void cflags_set(struct cflag_s* flag, int position);
 void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...);
 
 void cflags_unset(struct cflag_s* flag, int position);
-void cflags_unset_multiple(struct cflag_s flag, int nb_to_remove, ...);
+void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...);
 
 void cflags_flip(struct cflag_s* flag, int position);
 void cflags_flip_multiple(struct cflag_s flag, int nb_to_flip, ...);
