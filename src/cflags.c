@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "cflags.h"
 
 static inline void check_flag(struct cflag_s *flag) {
@@ -139,18 +140,73 @@ bool cflags_is_set(struct cflag_s* flag, int position) {
     switch (flag->type) {
         case CHAR:
             return (*(unsigned char*)flag->flag & 1 << position) != 0;
-            case SHORT:
+        case SHORT:
             return (*(unsigned short*)flag->flag & 1 << position) != 0;
-            case INT:
+        case INT:
             return (*(unsigned int*)flag->flag & 1 << position) != 0;
-            case LONG:
+        case LONG:
             return (*(unsigned long*)flag->flag & 1 << position) != 0;
-            case LONGLONG:
+        case LONGLONG:
             return (*(unsigned long long*)flag->flag & 1 << position) != 0;
-            default:
+        default:
             fprintf(stderr, "Unknown flag data structure type");
             exit(1);
     }
+}
+
+void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...) {
+    va_list to_set_flags;
+    va_start(to_set_flags, nb_to_set);
+
+    union {
+        unsigned char c;
+        unsigned short s;
+        unsigned int i;
+        unsigned long l;
+        unsigned long ll;
+    } bitmask;
+
+    for (int i = 0; i < nb_to_set; i += 1) {
+        switch (flag->type) {
+            case CHAR:
+                bitmask.c |= 1 << va_arg(to_set_flags, int);
+                break;
+            case SHORT:
+                bitmask.s |= 1 << va_arg(to_set_flags, int);
+                break;
+            case INT:
+                bitmask.i |= 1 << va_arg(to_set_flags, int);
+                break;
+            case LONG:
+                bitmask.l |= 1 << va_arg(to_set_flags, int);
+                break;
+            case LONGLONG:
+                bitmask.ll |= 1 << va_arg(to_set_flags, int);
+                break;
+            default:
+                fprintf(stderr, "Unknown flag data structure type");
+                exit(1);
+        }
+    }
+
+    switch (flag->type) {
+        case CHAR:
+            *(unsigned char *) flag->flag |= bitmask.c;
+            break;
+        case SHORT:
+            *(unsigned short *) flag->flag |= bitmask.s;
+            break;
+        case INT:
+            *(unsigned int *) flag->flag |= bitmask.i;
+            break;
+        case LONG:
+            *(unsigned long *) flag->flag |= bitmask.l;
+            break;
+        case LONGLONG:
+            *(unsigned long long *) flag->flag |= bitmask.ll;
+            break;
+    }
+    va_end(to_set_flags);
 }
 
 void cflags_free(struct cflag_s* flag) {
