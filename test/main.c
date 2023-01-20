@@ -15,4 +15,4 @@ int main() {
         printf("isn't set\n");
     cflags_free(cflag);
     return 0;
-}
+}git@github.com:IkeYeek/CFlags.git
