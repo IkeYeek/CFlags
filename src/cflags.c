@@ -321,9 +321,9 @@ bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...) {
     bitmask.ll = 0;
 
     for (int i = 0; i < nb_to_poll; i += 1) {
+        const unsigned int arg = va_arg(to_set_flags, unsigned int);
+        check_position(flag, arg);
         switch (flag->type) {
-            const unsigned int arg = va_arg(to_set_flags, unsigned int);
-            check_position(flag, arg);
             case CHAR:
                 bitmask.c |= 1 << arg;
                 break;
