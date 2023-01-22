@@ -169,7 +169,7 @@ void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...) {
     bitmask.ll = 0;
     for (int i = 0; i < nb_to_set; i += 1) {
         const unsigned int arg = va_arg(to_set_flags, unsigned int);
-        //check_position(flag, arg);
+        check_position(flag, arg);
         switch (flag->type) {
             case CHAR:
                 bitmask.c |= 1 << arg;
@@ -213,6 +213,7 @@ void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...) {
 }
 
 void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...) {
+    check_flag(flag);
     va_list to_set_flags;
     va_start(to_set_flags, nb_to_remove);
 
@@ -225,26 +226,28 @@ void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...) {
     } bitmask;
 
     for (int i = 0; i < nb_to_remove; i += 1) {
+        const unsigned int arg = va_arg(to_set_flags, unsigned int);
+        check_position(flag, arg);
         switch (flag->type) {
             case CHAR:
                 bitmask.c = 0;
-                bitmask.c |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.c |= 1 << arg;
                 break;
             case SHORT:
                 bitmask.s = 0;
-                bitmask.s |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.s |= 1 << arg;
                 break;
             case INT:
                 bitmask.i = 0;
-                bitmask.i |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.i |= 1 << arg;
                 break;
             case LONG:
                 bitmask.l = 0;
-                bitmask.l |= 1 << va_arg(to_set_flags, unsigned long);
+                bitmask.l |= 1 << arg;
                 break;
             case LONGLONG:
                 bitmask.ll = 0;
-                bitmask.ll |= 1 << va_arg(to_set_flags, unsigned long long);
+                bitmask.ll |= 1 << arg;
                 break;
             default:
                 fprintf(stderr, "Unknown flag data structure type");
@@ -273,6 +276,7 @@ void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...) {
 }
 
 bool cflags_all_set(struct cflag_s* flag) {
+    check_flag(flag);
     union {
         unsigned char c;
         unsigned short s;
@@ -304,6 +308,7 @@ bool cflags_all_set(struct cflag_s* flag) {
 }
 
 bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...) {
+    check_flag(flag);
     va_list to_set_flags;
     va_start(to_set_flags, nb_to_poll);
     union {
@@ -317,20 +322,22 @@ bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...) {
 
     for (int i = 0; i < nb_to_poll; i += 1) {
         switch (flag->type) {
+            const unsigned int arg = va_arg(to_set_flags, unsigned int);
+            check_position(flag, arg);
             case CHAR:
-                bitmask.c |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.c |= 1 << arg;
                 break;
             case SHORT:
-                bitmask.s |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.s |= 1 << arg;
                 break;
             case INT:
-                bitmask.i |= 1 << va_arg(to_set_flags, unsigned int);
+                bitmask.i |= 1 << arg;
                 break;
             case LONG:
-                bitmask.l |= 1 << va_arg(to_set_flags, unsigned long);
+                bitmask.l |= 1 << arg;
                 break;
             case LONGLONG:
-                bitmask.ll |= 1 << va_arg(to_set_flags, unsigned long long);
+                bitmask.ll |= 1 << arg;
                 break;
             default:
                 fprintf(stderr, "Unknown flag data structure type");
