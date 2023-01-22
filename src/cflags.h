@@ -32,7 +32,7 @@ void cflags_flip_multiple(struct cflag_s flag, int nb_to_flip, ...);
 
 bool cflags_is_set(struct cflag_s* flag, int position);
 bool cflags_all_set(struct cflag_s* flag);
-void cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...);
+bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...);
 
 void cflags_free(struct cflag_s* flag);
 
