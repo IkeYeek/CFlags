@@ -3,6 +3,9 @@ project(CFlags C)
 
 set(CMAKE_C_STANDARD 99)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+
 add_library(CFlags src/cflags.c)
 add_executable(CFlagsTest test/main.c)
 
