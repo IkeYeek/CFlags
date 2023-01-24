@@ -86,74 +86,6 @@ void cflags_set(struct cflag_s* flag, int position) {
     }
 }
 
-void cflags_unset(struct cflag_s* flag, int position) {
-    check_flag_and_position(flag, position);
-    switch (flag->type) {
-        case CHAR:
-            *(unsigned char*)flag->flag &= ~(1 << position);
-            break;
-        case SHORT:
-            *(unsigned short*)flag->flag &= ~(1 << position);
-            break;
-        case INT:
-            *(unsigned int*)flag->flag &= ~(1 << position);
-            break;
-        case LONG:
-            *(unsigned long*)flag->flag &= ~(1 << position);
-            break;
-        case LONGLONG:
-            *(unsigned long long*)flag->flag &= ~(1 << position);
-            break;
-        default:
-            fprintf(stderr, "Unknown flag data structure type");
-            exit(1);
-    }
-}
-
-void cflags_flip(struct cflag_s* flag, int position) {
-    check_flag_and_position(flag, position);
-    switch (flag->type) {
-        case CHAR:
-            *(unsigned char*)flag->flag ^= 1 << position;
-            break;
-        case SHORT:
-            *(unsigned short*)flag->flag ^= 1 << position;
-            break;
-        case INT:
-            *(unsigned int*)flag->flag ^= 1 << position;
-            break;
-        case LONG:
-            *(unsigned long*)flag->flag ^= 1 << position;
-            break;
-        case LONGLONG:
-            *(unsigned long long*)flag->flag ^= 1 << position;
-            break;
-        default:
-            fprintf(stderr, "Unknown flag data structure type");
-            exit(1);
-    }
-}
-
-bool cflags_is_set(struct cflag_s* flag, int position) {
-    check_flag_and_position(flag, position);
-
-    switch (flag->type) {
-        case CHAR:
-            return (*(unsigned char*)flag->flag & 1 << position) != 0;
-        case SHORT:
-            return (*(unsigned short*)flag->flag & 1 << position) != 0;
-        case INT:
-            return (*(unsigned int*)flag->flag & 1 << position) != 0;
-        case LONG:
-            return (*(unsigned long*)flag->flag & 1 << position) != 0;
-        case LONGLONG:
-            return (*(unsigned long long*)flag->flag & 1 << position) != 0;
-        default:
-            fprintf(stderr, "Unknown flag data structure type");
-            exit(1);
-    }
-}
-
 void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...) {
     check_flag(flag);
     va_list to_set_flags;
@@ -210,6 +142,30 @@ void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...) {
             break;
     }
     va_end(to_set_flags);
+}
+
+void cflags_unset(struct cflag_s* flag, int position) {
+    check_flag_and_position(flag, position);
+    switch (flag->type) {
+        case CHAR:
+            *(unsigned char*)flag->flag &= ~(1 << position);
+            break;
+        case SHORT:
+            *(unsigned short*)flag->flag &= ~(1 << position);
+            break;
+        case INT:
+            *(unsigned int*)flag->flag &= ~(1 << position);
+            break;
+        case LONG:
+            *(unsigned long*)flag->flag &= ~(1 << position);
+            break;
+        case LONGLONG:
+            *(unsigned long long*)flag->flag &= ~(1 << position);
+            break;
+        default:
+            fprintf(stderr, "Unknown flag data structure type");
+            exit(1);
+    }
 }
 
 void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...) {
@@ -275,6 +231,110 @@ void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...) {
     va_end(to_set_flags);
 }
 
+void cflags_flip(struct cflag_s* flag, int position) {
+    check_flag_and_position(flag, position);
+    switch (flag->type) {
+        case CHAR:
+            *(unsigned char*)flag->flag ^= 1 << position;
+            break;
+        case SHORT:
+            *(unsigned short*)flag->flag ^= 1 << position;
+            break;
+        case INT:
+            *(unsigned int*)flag->flag ^= 1 << position;
+            break;
+        case LONG:
+            *(unsigned long*)flag->flag ^= 1 << position;
+            break;
+        case LONGLONG:
+            *(unsigned long long*)flag->flag ^= 1 << position;
+            break;
+        default:
+            fprintf(stderr, "Unknown flag data structure type");
+            exit(1);
+    }
+}
+
+void cflags_flip_multiple(cflag_ptr flag, int nb_to_flip, ...) {
+    check_flag(flag);
+    union {
+        unsigned char c;
+        unsigned short s;
+        unsigned int i;
+        unsigned long l;
+        unsigned long ll;
+    } bitmask;
+    bitmask.ll = 0;
+
+    va_list to_flip;
+    va_start(to_flip, nb_to_flip);
+
+    for (int i = 0; i < nb_to_flip; i += 1) {
+        const unsigned int arg = va_arg(to_flip, unsigned int);
+        check_position(arg);
+        switch (flag->type) {
+            case CHAR:
+                bitmask.c |= (unsigned char)(1 << nb_to_flip);
+                break;
+            case SHORT:
+                bitmask.s |= (unsigned short)(1 << nb_to_flip);
+                break;
+            case INT:
+                bitmask.i |= (unsigned int)(1 << nb_to_flip);
+                break;
+            case LONG:
+                bitmask.l |= (unsigned long)(1 << nb_to_flip);
+                break;
+            case LONGLONG:
+                bitmask.ll |= (unsigned long long)(1 << nb_to_flip);
+                break;
+            default:
+                fprintf(stderr, "Unknown flag data structure type");
+                exit(1);
+        }
+    }
+
+    va_end(to_flip);
+
+    switch (flag->type) {
+        case CHAR:
+            *(unsigned char*) flag->flag ^= bitmask.c;
+            break;
+        case SHORT:
+            *(unsigned short*) flag->flag ^=bitmask.s;
+            break;
+        case INT:
+            *(unsigned int*) flag->flag ^=bitmask.i;
+            break;
+        case LONG:
+            *(unsigned long*) flag->flag ^=bitmask.l;
+            break;
+        case LONGLONG:
+            *(unsigned long long*) flag->flag ^=bitmask.ll;
+            break;
+    }
+}
+
+bool cflags_is_set(struct cflag_s* flag, int position) {
+    check_flag_and_position(flag, position);
+
+    switch (flag->type) {
+        case CHAR:
+            return (*(unsigned char*)flag->flag & 1 << position) != 0;
+        case SHORT:
+            return (*(unsigned short*)flag->flag & 1 << position) != 0;
+        case INT:
+            return (*(unsigned int*)flag->flag & 1 << position) != 0;
+        case LONG:
+            return (*(unsigned long*)flag->flag & 1 << position) != 0;
+        case LONGLONG:
+            return (*(unsigned long long*)flag->flag & 1 << position) != 0;
+        default:
+            fprintf(stderr, "Unknown flag data structure type");
+            exit(1);
+    }
+}
+
 bool cflags_all_set(struct cflag_s* flag) {
     check_flag(flag);
     union {
@@ -306,6 +366,8 @@ bool cflags_all_set(struct cflag_s* flag) {
             exit(1);
     }
 }
+
+
 
 bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...) {
     check_flag(flag);
@@ -358,6 +420,10 @@ bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...) {
         case LONGLONG:
             return (bitmask.ll ^ *(unsigned long long*)flag->flag) == 0;
     }
+}
+
+bool cflags_any_set(cflag_ptr flag) {
+    return *(unsigned long long*) flag->flag > 0;  // Don't care about obj size rly
 }
 
 void cflags_free(struct cflag_s* flag) {

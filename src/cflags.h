@@ -19,21 +19,23 @@ struct cflag_s {
     void *flag;
 };
 
-struct cflag_s* cflags_create(int size);
+typedef struct cflag_s* cflag_ptr;
 
-void cflags_set(struct cflag_s* flag, int position);
-void cflags_set_multiple(struct cflag_s* flag, int nb_to_set, ...);
+cflag_ptr cflags_create(int size);
 
-void cflags_unset(struct cflag_s* flag, int position);
-void cflags_unset_multiple(struct cflag_s* flag, int nb_to_remove, ...);
+void cflags_set(cflag_ptr flag, int position);
+void cflags_set_multiple(cflag_ptr flag, int nb_to_set, ...);
 
-void cflags_flip(struct cflag_s* flag, int position);
-void cflags_flip_multiple(struct cflag_s flag, int nb_to_flip, ...);
+void cflags_unset(cflag_ptr flag, int position);
+void cflags_unset_multiple(cflag_ptr flag, int nb_to_remove, ...);
 
-bool cflags_is_set(struct cflag_s* flag, int position);
-bool cflags_all_set(struct cflag_s* flag);
-bool cflags_are_set(struct cflag_s* flag, int nb_to_poll, ...);
+void cflags_flip(cflag_ptr flag, int position);
+void cflags_flip_multiple(cflag_ptr flag, int nb_to_flip, ...);
 
-void cflags_free(struct cflag_s* flag);
+bool cflags_is_set(cflag_ptr flag, int position);
+bool cflags_all_set(cflag_ptr flag);
+bool cflags_are_set(cflag_ptr flag, int nb_to_poll, ...);
+bool cflags_any_set(cflag_ptr flag);
+void cflags_free(cflag_ptr flag);
 
 #endif //CFLAGS_CFLAGS_H
