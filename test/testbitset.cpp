@@ -6,7 +6,11 @@
 class BitsetTest : public testing::Test {
 protected:
     void SetUp() override {
-        std::cout << "test" << "\n";
+
+    }
+
+    void TearDown() override {
+
     }
 
 
@@ -22,4 +26,9 @@ TEST(BitsetTest, HelloTest) {
 
 TEST(BitsetTest, CreateBitset) {
 
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

@@ -17,7 +17,7 @@ int main() {
         printf("isn't set\n");
     cflags_free(cflag);*/
 
-    cbitset_ptr cbitset = cbitset_create(128, false);
+    cbitset_ptr cbitset = cbitset_create(8, false);
     cbitset_set(cbitset, 0);
     cbitset_set(cbitset, 127);
     bool t = cbitset_is_set(cbitset, 127);
